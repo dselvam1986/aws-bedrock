@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Bedrock Sample</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+    }
+    .container {
+      text-align: center;
+      padding: 20px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      background-color: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      width: 400px;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .drop-zone {
+      border: 2px dashed #007acc;
+      border-radius: 10px;
+      padding: 20px;
+      background-color: #eaf6ff;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .drop-zone.dragover {
+      background-color: #cce4ff;
+    }
+    .drop-zone p {
+      margin: 0;
+      font-size: 16px;
+      color: #007acc;
+    }
+    input[type="file"] {
+      display: none;
+    }
+    .file-list {
+      margin-top: 15px;
+      text-align: left;
+    }
+    .file-list p {
+      margin: 5px 0;
+      font-size: 14px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>AWS Bedrock Sample</h1>
+    <div class="drop-zone" id="dropZone">
+      <p>Drag and drop files here or click to upload</p>
+      <input type="file" id="fileInput">
+    </div>
+    <div class="file-list" id="fileList"></div>
+  </div>
+
+  <script>
+    const dropZone = document.getElementById("dropZone");
+    const fileInput = document.getElementById("fileInput");
+    const fileList = document.getElementById("fileList");
+
+    const displayFiles = (files) => {
+      fileList.innerHTML = ''; // Clear previous files
+      for (const file of files) {
+        const fileItem = document.createElement("p");
+        fileItem.textContent = `File: ${file.name}`;
+        fileList.appendChild(fileItem);
+      }
+    };
+
+    const uploadFiles = async (files) => {
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+          const response = await fetch('/api/upload', {
+            method: 'POST',
+            body: formData,
+          });
+          const data = await response.text();
+          console.log(data);
+        //   alert(`Uploaded: ${file.name}`);
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          alert(`Failed to upload: ${file.name}`);
+        }
+      }
+    };
+
+    dropZone.addEventListener("click", () => {
+      fileInput.click();
+    });
+
+    dropZone.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      dropZone.classList.add("dragover");
+    });
+
+    dropZone.addEventListener("dragleave", () => {
+      dropZone.classList.remove("dragover");
+    });
+
+    dropZone.addEventListener("drop", (event) => {
+      event.preventDefault();
+      dropZone.classList.remove("dragover");
+      const files = event.dataTransfer.files;
+      if (files.length > 0) {
+        displayFiles(files);
+        uploadFiles(files);
+      }
+    });
+
+    fileInput.addEventListener("change", () => {
+      const files = fileInput.files;
+      if (files.length > 0) {
+        displayFiles(files);
+        uploadFiles(files);
+      }
+    });
+  </script>
+</body>
+</html>

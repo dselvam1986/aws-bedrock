@@ -11,6 +11,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-bedrock": "^3.734.0",
+    "@aws-sdk/client-bedrock-agent": "^3.736.0",
+    "@aws-sdk/client-bedrock-agent-runtime": "^3.734.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.734.0",
     "@aws-sdk/client-lambda": "^3.731.1",
     "@aws-sdk/client-s3": "^3.731.1",
     "@aws-sdk/lib-storage": "^3.732.0",
